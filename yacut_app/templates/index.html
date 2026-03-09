@@ -36,16 +36,24 @@
     </div>
   </div>
 
-  <div class="container">
-    <div class="row">
-      <div class="col-sm"></div>
-      <div class="col-sm">
-        <p class="text-center">
-        <h5 class="text-center">{% block info_message %}Пример информационного сообщения{% endblock %}</h5>
-        </p>
-      </div>
-      <div class="col-sm"></div>
+<div class="container">
+  <div class="row">
+    <div class="col-sm"></div>
+    <div class="col-sm">
+      <p class="text-center">
+        <h5 class="text-center">
+          {% if created_short %}
+            Ваша новая ссылка готова:
+            <a href="/{{ created_short }}">
+              {{ request.host }}/{{ created_short }}
+            </a>
+          {% else %}
+          {% endif %}
+        </h5>
+      </p>
     </div>
+    <div class="col-sm"></div>
   </div>
+</div>
 </section>
 {% endblock %}
