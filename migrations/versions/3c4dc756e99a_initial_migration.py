@@ -1,8 +1,8 @@
-"""Create URLMap table
+"""Initial migration
 
-Revision ID: 7ff4e0fbcbfb
+Revision ID: 3c4dc756e99a
 Revises: 
-Create Date: 2026-03-09 16:36:03.397027
+Create Date: 2026-03-10 14:25:00.940560
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '7ff4e0fbcbfb'
+revision = '3c4dc756e99a'
 down_revision = None
 branch_labels = None
 depends_on = None
