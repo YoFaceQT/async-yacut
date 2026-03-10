@@ -11,4 +11,4 @@ migrate = Migrate(app, db)
 
 
 from . import error_handlers
-from . import api_views, views, utilits
+from . import api_views, views, utilits, yadisk

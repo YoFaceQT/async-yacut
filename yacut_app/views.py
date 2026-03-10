@@ -4,6 +4,7 @@ from .forms import URLMapForm, UploadFilesForm
 from .models import URLMap
 from settings import FORBIDEN_URLS
 from .utilits import generate_unique_short
+from .yadisk import upload_file_to_disk, upload_files_to_disk, get_upload_url
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -49,7 +50,50 @@ def redirect_to_original(short):
     return redirect(url_map.original)
 
 
-@app.route('/files')
+@app.route('/files', methods=['GET', 'POST'])
 def files_view():
     form = UploadFilesForm()
-    return render_template('files.html', form=form)
+    uploaded_files = []
+
+    if form.validate_on_submit():
+        if form.files.data:
+            disk_results = upload_files_to_disk(form.files.data)
+
+            for result in disk_results:
+                if result['success']:
+                    short_link = generate_unique_short()
+
+                    url_map = URLMap(
+                        original=result['download_link'],
+                        short=short_link,
+                    )
+                    db.session.add(url_map)
+
+                    uploaded_files.append({
+                        'filename': result['filename'],
+                        'short_link': short_link,
+                        'full_link': url_for('redirect_file', short_link=short_link, _external=True)
+                    })
+                else:
+                    flash(f'Ошибка при загрузке {result["filename"]}: {result["error"]}')
+
+            if uploaded_files:
+                db.session.commit()
+                flash(f' Успешно загружено {len(uploaded_files)} файлов')
+
+        else:
+            flash('Выберите файлы для загрузки')
+    recent_files = URLMap.query.order_by(URLMap.timestamp.desc()).limit(5).all()
+
+    return render_template(
+        'files.html',
+        form=form,
+        uploaded_files=uploaded_files,
+        recent_files=recent_files
+    )
+
+
+@app.route('/f/<short_link>')
+def redirect_file(short_link):
+    url_map = URLMap.query.filter_by(short=short_link).first_or_404()
+    return redirect(url_map.original, code=307)

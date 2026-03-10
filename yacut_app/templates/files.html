@@ -30,16 +30,58 @@
     </div>
   </div>
 
+  <!-- Flash сообщения -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+      <div class="container">
+        <div class="row">
+          <div class="col-sm"></div>
+          <div class="col-sm">
+            <p class="text-center">
+              <span style="color:red">{{ message }}</span>
+            </p>
+          </div>
+          <div class="col-sm"></div>
+        </div>
+      </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  {% if uploaded_files %}
   <div class="container">
     <div class="row">
       <div class="col-sm"></div>
       <div class="col-sm">
-        <p class="text-center">
-        <h5 class="text-center">{% block info_message %}Загрузите файлы для обработки{% endblock %}</h5>
-        </p>
+        <table class="table">
+          <tbody>
+            {% for file in uploaded_files %}
+            <tr>
+              <td class="align-middle">{{ file.filename }}</td>
+              <td class="text-end align-middle">
+                <a href="{{ file.full_link }}">
+                  {{ request.host }}/{{ file.short_link }}
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
       </div>
       <div class="col-sm"></div>
     </div>
   </div>
+  {% else %}
+  <div class="container">
+    <div class="row">
+      <div class="col-sm"></div>
+      <div class="col-sm">
+        <h5 class="text-center">Загрузите файлы для обработки</h5>
+      </div>
+      <div class="col-sm"></div>
+    </div>
+  </div>
+  {% endif %}
 </section>
 {% endblock %}
