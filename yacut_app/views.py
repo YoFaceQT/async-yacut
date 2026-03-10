@@ -9,7 +9,7 @@ from .utilits import generate_unique_short
 @app.route('/', methods=['GET', 'POST'])
 def index_view():
     form = URLMapForm()
-    created_short = None
+    full_url = None
 
     if form.validate_on_submit():
         original_link = form.original_link.data
@@ -22,7 +22,7 @@ def index_view():
                 return render_template(
                     'index.html',
                     form=form,
-                    created_short=created_short
+                    full_url=full_url
                 )
 
             short = custom_id
@@ -37,14 +37,10 @@ def index_view():
         db.session.commit()
 
         flash('Ссылка успешно создана!', 'success')
-        created_short = short
-        return render_template(
-            'index.html', form=form, created_short=created_short
-        )
+        full_url = url_for('redirect_to_original', short=short, _external=True)
+        return render_template('index.html', form=form, full_url=full_url)
 
-    return render_template(
-        'index.html', form=form, created_short=created_short
-    )
+    return render_template('index.html', form=form, full_url=full_url)
 
 
 @app.route('/<short>')
