@@ -1,6 +1,8 @@
 import re
-from . import app, db
+
 from flask import jsonify, request
+
+from . import app, db
 from .error_handlers import InvalidAPIUsage
 from .models import URLMap
 from settings import FORBIDEN_URLS
@@ -10,7 +12,7 @@ from .utilits import generate_unique_short
 @app.route('/api/id/', methods=['POST'])
 def get_short_link():
     try:
-        data = request.get_json(force=True, silent=True)
+        data = request.get_json(silent=True)
     except Exception as e:
         print(f"Ошибка при парсинге JSON: {e}")
         data = None
@@ -22,29 +24,29 @@ def get_short_link():
         raise InvalidAPIUsage('\"url\" является обязательным полем!')
 
     original_link = data['url']
-    custom_short = data.get('custom_id')
+    custom_id = data.get('custom_id')
 
-    if custom_short:
-        if custom_short in FORBIDEN_URLS:
-            raise InvalidAPIUsage(
-                'Предложенный вариант короткой ссылки запрещен'
-            )
-        if len(custom_short) > 16:
-            raise InvalidAPIUsage(
-                'Указано недопустимое имя для короткой ссылки'
-            )
-
-        if not re.match('^[A-Za-z0-9]+$', custom_short):
-            raise InvalidAPIUsage(
-                'Указано недопустимое имя для короткой ссылки'
-            )
-
-        if URLMap.query.filter_by(short=custom_short).first() is not None:
+    if custom_id:
+        if URLMap.query.filter_by(short=custom_id).first() is not None:
             raise InvalidAPIUsage(
                 'Предложенный вариант короткой ссылки уже существует.'
             )
 
-        short = custom_short
+        if custom_id in FORBIDEN_URLS:
+            raise InvalidAPIUsage(
+                'Предложенный вариант короткой ссылки запрещен'
+            )
+        if len(custom_id) > 16:
+            raise InvalidAPIUsage(
+                'Указано недопустимое имя для короткой ссылки'
+            )
+
+        if not re.match('^[A-Za-z0-9]+$', custom_id):
+            raise InvalidAPIUsage(
+                'Указано недопустимое имя для короткой ссылки'
+            )
+
+        short = custom_id
     else:
         short = generate_unique_short()
 

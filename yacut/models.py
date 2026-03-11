@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from yacut_app import db
+from yacut import db
 
 
 class URLMap(db.Model):
