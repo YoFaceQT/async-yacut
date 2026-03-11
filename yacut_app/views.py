@@ -1,4 +1,3 @@
-import asyncio
 from . import app, db
 from flask import flash, redirect, render_template, url_for
 from .forms import URLMapForm, UploadFilesForm
@@ -67,7 +66,11 @@ async def files_view():
                     uploaded_files.append({
                         'filename': result['filename'],
                         'short_link': short,
-                        'full_link': url_for('redirect_to_original', short=short, _external=True)
+                        'full_link': url_for(
+                            'redirect_to_original',
+                            short=short,
+                            _external=True
+                        )
                     })
                 else:
                     flash(f'Ошибка при загрузке {result["filename"]}')
@@ -78,7 +81,7 @@ async def files_view():
         else:
             flash('Выберите файлы для загрузки')
 
-    recent_files = URLMap.query.order_by(URLMap.timestamp.desc()).limit(5).all()
+    recent_files = URLMap.query.order_by(URLMap.timestamp.desc()).all()
 
     return render_template(
         'files.html',

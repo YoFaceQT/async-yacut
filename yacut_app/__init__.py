@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
+
 from settings import Config
 
 
@@ -10,5 +11,4 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
 
-from . import error_handlers
-from . import api_views, views, utilits, yadisk
+from . import api_views, error_handlers, utilits, views, yadisk

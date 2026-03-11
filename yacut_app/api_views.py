@@ -65,7 +65,6 @@ def get_short_link():
     }), 201
 
 
-
 @app.route('/api/id/<short>/', methods=['GET'])
 def api_redirect_to_original(short):
     url_map = URLMap.query.filter_by(short=short).first()
