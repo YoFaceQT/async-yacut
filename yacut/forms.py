@@ -1,12 +1,13 @@
 from flask_wtf import FlaskForm
+from flask_wtf.file import MultipleFileField
 from wtforms import StringField, URLField
 from wtforms.validators import DataRequired, Length, Optional, Regexp, URL
-from flask_wtf.file import MultipleFileField
 
-
-MIN_SHORT_LENGTH = 1
-MAX_SHORT_LENGTH = 16
-SHORT_PATTERN = '^[A-Za-z0-9]+$'
+from .constants import (
+    MAX_SHORT_URL_LENGTH,
+    MIN_SHORT_URL_LENGTH,
+    SHORT_PATTERN
+)
 
 
 class URLMapForm(FlaskForm):
@@ -26,11 +27,12 @@ class URLMapForm(FlaskForm):
         validators=[
             Optional(),
             Length(
-                min=MIN_SHORT_LENGTH,
-                max=MAX_SHORT_LENGTH,
+                min=MIN_SHORT_URL_LENGTH,
+                max=MAX_SHORT_URL_LENGTH,
                 message=(
-                    f'Длина ссылки должна быть '
-                    f'от {MIN_SHORT_LENGTH} до {MAX_SHORT_LENGTH} символов'
+                    f'Длина ссылки должна быть'
+                    f' от {MIN_SHORT_URL_LENGTH}'
+                    f' до {MAX_SHORT_URL_LENGTH} символов'
                 )
             ),
             Regexp(

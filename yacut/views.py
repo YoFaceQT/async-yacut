@@ -1,52 +1,42 @@
 from . import app, db
 from flask import flash, redirect, render_template, url_for
 
-from .constants import FILES_URL, FORBIDEN_URLS
-from .forms import URLMapForm, UploadFilesForm
-from .models import URLMap
+from .constants import FILES_URL
+from .forms import UploadFilesForm, URLMapForm
+from .models import ShortLinkCreationError, URLMap
 from .yadisk import upload_files_to_disk
-
 
 
 @app.route('/', methods=['GET', 'POST'])
 def index_view():
-    """Функция главной страницы"""
+    """Создает короткую ссылку через веб-форму."""
     form = URLMapForm()
     full_url = None
 
     if not form.validate_on_submit():
         return render_template('index.html', form=form, full_url=full_url)
 
-    original_link = form.original_link.data
-    custom_id = form.custom_id.data
+    try:
+        url_map = URLMap.create(
+            original=form.original_link.data,
+            custom_id=form.custom_id.data
+        )
 
-    if custom_id:
-        if (URLMap.query.filter_by(short=custom_id).first() is not None
-                or custom_id in FORBIDEN_URLS):
-            flash('Предложенный вариант короткой ссылки уже существует.')
-            return render_template(
-                'index.html',
-                form=form,
-                full_url=full_url
-            )
+        full_url = url_for(
+            'redirect_to_original',
+            short=url_map.short,
+            _external=True
+        )
+        flash('Ссылка успешно создана!')
 
-        short = custom_id
-    else:
-        short = URLMap.generate_unique_short()
+    except ShortLinkCreationError as e:
+        flash(str(e))
+        return render_template('index.html', form=form, full_url=full_url)
 
-    url_map = URLMap(
-        original=original_link,
-        short=short
-    )
-    db.session.add(url_map)
-    db.session.commit()
-
-    flash('Ссылка успешно создана!')
-    full_url = url_for('redirect_to_original', short=short, _external=True)
     return render_template('index.html', form=form, full_url=full_url)
 
 
-@app.route(FILES_URL, methods=['GET', 'POST'])
+@app.route(f'/{FILES_URL}', methods=['GET', 'POST'])
 async def files_view():
     """Функция страницы загрузки файлов"""
     form = UploadFilesForm()
