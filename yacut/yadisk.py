@@ -17,6 +17,7 @@ REQUEST_UPLOAD_URL = f'{API_HOST}{API_VERSION}/disk/resources/upload'
 
 
 async def upload_file(session, file):
+    """Загружает файл на Яндекс.Диск и возвращает его расположение."""
     async with session.get(
             REQUEST_UPLOAD_URL,
             headers=AUTH_HEADERS,
@@ -34,6 +35,7 @@ async def upload_file(session, file):
 
 
 async def get_url(session, location, filename):
+    """Получает ссылку для скачивания файла с Яндекс.Диска."""
     async with session.get(
             DOWNLOAD_LINK_URL,
             headers=AUTH_HEADERS,
@@ -45,6 +47,7 @@ async def get_url(session, location, filename):
 
 
 async def upload_files_to_disk(files):
+    """Загружает несколько файлов на Яндекс.Диск и возвращает ссылки на них."""
     async with aiohttp.ClientSession() as session:
         results = []
         for file in files:

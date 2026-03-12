@@ -1,7 +1,5 @@
 import os
 
-FORBIDEN_URLS = ['files']
-
 
 class Config(object):
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URI')
