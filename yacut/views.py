@@ -1,5 +1,5 @@
 from . import app, db
-from flask import flash, redirect, render_template, url_for
+from flask import flash, redirect, render_template
 
 from .constants import FILES_URL
 from .forms import UploadFilesForm, URLMapForm

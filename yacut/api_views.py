@@ -1,8 +1,14 @@
+import re
 from http import HTTPStatus
 
 from flask import jsonify, request
 
 from . import app
+from .constants import (
+    MAX_SHORT_URL_LENGTH,
+    MIN_SHORT_URL_LENGTH,
+    SHORT_PATTERN
+)
 from .error_handlers import InvalidAPIUsage
 from .models import ShortLinkCreationError, URLMap
 
@@ -17,6 +23,16 @@ def get_short_link():
 
     if 'url' not in data:
         raise InvalidAPIUsage('"url" является обязательным полем!')
+
+    custom_id = data.get('custom_id')
+
+    if custom_id:
+        if (not MIN_SHORT_URL_LENGTH <= len(custom_id)
+                <= MAX_SHORT_URL_LENGTH
+                or not re.match(SHORT_PATTERN, custom_id)):
+            raise InvalidAPIUsage(
+                'Указано недопустимое имя для короткой ссылки'
+            )
 
     try:
         url_map = URLMap.create(
