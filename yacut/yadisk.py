@@ -1,19 +1,17 @@
-import os
 import urllib
 
-from dotenv import load_dotenv
 import aiohttp
+from dotenv import load_dotenv
+
+from .constants import (
+    AUTH_HEADERS,
+    DISK_APP_FOLDER,
+    DOWNLOAD_LINK_URL,
+    REQUEST_UPLOAD_URL
+)
 
 
 load_dotenv()
-DISK_TOKEN = os.environ.get('DISK_TOKEN')
-
-API_HOST = 'https://cloud-api.yandex.net/'
-API_VERSION = 'v1'
-AUTH_HEADERS = {'Authorization': f'OAuth {DISK_TOKEN}'}
-DISK_APP_FOLDER = 'apps/Uploader/'
-DOWNLOAD_LINK_URL = f'{API_HOST}{API_VERSION}/disk/resources/download'
-REQUEST_UPLOAD_URL = f'{API_HOST}{API_VERSION}/disk/resources/upload'
 
 
 async def upload_file(session, file):

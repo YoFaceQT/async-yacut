@@ -38,4 +38,4 @@ def api_redirect_to_original(short):
             'Указанный id не найден',
             status_code=HTTPStatus.NOT_FOUND
         )
-    return jsonify({"url": url_map.original}), HTTPStatus.OK
+    return jsonify({'url': url_map.original}), HTTPStatus.OK

@@ -6,7 +6,8 @@ from wtforms.validators import DataRequired, Length, Optional, Regexp, URL
 from .constants import (
     MAX_SHORT_URL_LENGTH,
     MIN_SHORT_URL_LENGTH,
-    SHORT_PATTERN
+    SHORT_PATTERN,
+    URL_MAX_LENGHT
 )
 
 
@@ -19,6 +20,10 @@ class URLMapForm(FlaskForm):
             URL(
                 message='Некорректный URL.'
                 'Убедитесь, что ссылка начинается с http:// или https://'
+            ),
+            Length(
+                max=URL_MAX_LENGHT,
+                message=f'URL не может быть длиннее {URL_MAX_LENGHT} символов'
             )
         ]
     )
@@ -30,7 +35,7 @@ class URLMapForm(FlaskForm):
                 min=MIN_SHORT_URL_LENGTH,
                 max=MAX_SHORT_URL_LENGTH,
                 message=(
-                    f'Длина ссылки должна быть'
+                    'Длина ссылки должна быть'
                     f' от {MIN_SHORT_URL_LENGTH}'
                     f' до {MAX_SHORT_URL_LENGTH} символов'
                 )

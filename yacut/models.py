@@ -44,17 +44,14 @@ class URLMap(db.Model):
         short = ''.join(
             random.choices(string.ascii_letters + string.digits, k=length)
         )
-        while (
-            URLMap.query.filter_by(short=short).first() is not None
-            or short in FORBIDEN_URLS
-        ):
+        while URLMap.exists(short) or short in FORBIDEN_URLS:
             short = URLMap.generate_unique_short()
         return short
 
     @staticmethod
-    def get(short):
+    def exists(short):
         """"Метод возвращает запись ко короткому идентификатору."""
-        return URLMap.query.filter_by(short=short).first()
+        return URLMap.query.filter_by(short=short).first() is not None
 
     @staticmethod
     def create(original, custom_id=None):
@@ -72,7 +69,7 @@ class URLMap(db.Model):
                     'Указано недопустимое имя для короткой ссылки'
                 )
 
-            if URLMap.query.filter_by(short=custom_id).first() is not None:
+            if URLMap.exists(custom_id):
                 raise ShortLinkCreationError(
                     'Предложенный вариант короткой ссылки уже существует.'
                 )
