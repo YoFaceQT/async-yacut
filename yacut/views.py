@@ -1,6 +1,6 @@
-from . import app, db
 from flask import flash, redirect, render_template
 
+from . import app, db
 from .constants import FILES_URL
 from .forms import UploadFilesForm, URLMapForm
 from .models import ShortLinkCreationError, URLMap

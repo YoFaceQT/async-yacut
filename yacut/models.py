@@ -35,24 +35,29 @@ class URLMap(db.Model):
         }
 
     @staticmethod
+    def is_short_unavailable(short):
+        """Проверяет, недоступен ли короткий идентификатор."""
+        return URLMap.exists(short) or short in FORBIDEN_URLS
+
+    @staticmethod
     def generate_unique_short(length=6):
         """Генерирует уникальный короткий идентификатор для ссылки."""
         short = ''.join(
             random.choices(string.ascii_letters + string.digits, k=length)
         )
-        while URLMap.exists(short) or short in FORBIDEN_URLS:
+        while URLMap.is_short_unavailable(short):
             short = URLMap.generate_unique_short()
         return short
 
     @staticmethod
     def exists(short):
         """"Метод возвращает запись ко короткому идентификатору."""
-        return URLMap.query.filter_by(short=short).first() is not None
+        return URLMap.query.filter_by(short=short).first()
 
     def create(original, custom_id=None):
         """Создает и сохраняет новую короткую ссылку."""
         if custom_id:
-            if URLMap.exists(custom_id) or custom_id in FORBIDEN_URLS:
+            if URLMap.is_short_unavailable(custom_id):
                 raise ShortLinkCreationError(
                     'Предложенный вариант короткой ссылки уже существует.'
                 )
