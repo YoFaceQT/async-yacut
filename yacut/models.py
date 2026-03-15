@@ -37,7 +37,7 @@ class URLMap(db.Model):
     @staticmethod
     def is_short_unavailable(short):
         """Проверяет, недоступен ли короткий идентификатор."""
-        return URLMap.exists(short) or short in FORBIDEN_URLS
+        return URLMap.get(short) or short in FORBIDEN_URLS
 
     @staticmethod
     def generate_unique_short(length=6):
@@ -50,7 +50,7 @@ class URLMap(db.Model):
         return short
 
     @staticmethod
-    def exists(short):
+    def get(short):
         """"Метод возвращает запись ко короткому идентификатору."""
         return URLMap.query.filter_by(short=short).first()
 

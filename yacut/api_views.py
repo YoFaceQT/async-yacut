@@ -48,7 +48,7 @@ def get_short_link():
 @app.route('/api/id/<short>/', methods=['GET'])
 def api_redirect_to_original(short):
     """Функция переадресации на оригинальную ссылку"""
-    url_map = URLMap.query.filter_by(short=short).first()
+    url_map = URLMap.get(short)
     if url_map is None:
         raise InvalidAPIUsage(
             'Указанный id не найден',
